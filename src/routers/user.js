@@ -42,7 +42,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       const url = req.file.key;
     const shortLink = url;
     const NumberOfcount = 0;
-    const Org_link=`https://${bucketName}.s3.${region}.amazonaws.com/${shortLink}`
+    const Org_link=`https://${process.env.AWS_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${shortLink}`
     // Create new file document
     const file = new File({
       shortLink: url,
@@ -68,8 +68,6 @@ router.get("/:shortLink", async (req, res) => {
     if (!file) {
       return res.status(404).send("File not found");
     }
-    file.openLinkCount=Number(file.openLinkCount)+1
-    await file.save();
     res.redirect(file.originalLink);
   } catch (err) {
     console.error(err);
