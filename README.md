@@ -15,8 +15,8 @@ To create Node app needs to install following dependencies
 ### In the project directory, you can run using following command:
 ### `Node src/index`
 
-### Run APIs at  given end point.
- [http://localhost:3001](http://localhost:3001) using forntend or Postman.
+### APIs run at  given endpoint. You can forntend or Postman to access it.
+ [http://localhost:3001](http://localhost:3001) .
 
 ### Deployment
 Our backend is deployed on render.
