@@ -37,26 +37,45 @@ const upload = multer({
 });
 
 router.post("/upload", upload.single("file"), async (req, res) => {
-  const url = req.file.key;
-  const shortLink = url;
-  const originalName = req.file.originalname;
-  // Create new file document
-  const file = new File({
-    shortLink: url,
-    originalName: originalName,
-  });
-  // Save file document to database
-  await file.save();
-  res.json({ shortLink });
+  try{
+    if(req.file.key){
+      const url = req.file.key;
+    const shortLink = url;
+    const NumberOfcount = 0;
+    const Org_link=`https://${bucketName}.s3.${region}.amazonaws.com/${shortLink}`
+    // Create new file document
+    const file = new File({
+      shortLink: url,
+      originalLink:Org_link,
+      openLinkCount:NumberOfcount,
+    });
+    // Save file document to database
+    await file.save();
+    res.json({ shortLink });
+    }else{
+      res.status(500).send("Unable to upload");
+    }
+  }catch(error){
+    console.error(error);
+    res.status(500).send("Server error");
+  }
 });
 
+// Define file download route using short link
 router.get("/:shortLink", async (req, res) => {
-  const params = {
-    Bucket: bucketName,
-    Key: req.params.shortLink,
-  };
-  const fileStream = s3.getObject(params).createReadStream();
-  fileStream.pipe(res);
+  try {
+    const file = await File.findOne({ shortLink: req.params.shortLink });
+    if (!file) {
+      return res.status(404).send("File not found");
+    }
+    file.openLinkCount=Number(file.openLinkCount)+1
+    await file.save();
+    res.redirect(file.originalLink);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
+
 
 module.exports = router;

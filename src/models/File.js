@@ -6,9 +6,13 @@ const fileSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    originalName:{
-        type:String,
-    }
+    openLinkCount:{
+        type:Number,
+    },
+    originalLink:{
+      type:String,
+      required:true
+    },
   },{
     timestamps:true
 });
